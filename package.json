@@ -11,6 +11,7 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "hoist-non-react-statics": "^3.0.0-rc.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "tslib": "^1.9.3"

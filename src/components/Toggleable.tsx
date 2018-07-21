@@ -6,7 +6,7 @@ const initialState = { show: false }
 const defaultProps: DefaultProps = { props: {} }
 
 type State = Readonly<typeof initialState>
-type Props<P extends object = object> = Partial<
+export type Props<P extends object = object> = Partial<
   {
     children: RenderCallback | ReactNode
     render: RenderCallback
