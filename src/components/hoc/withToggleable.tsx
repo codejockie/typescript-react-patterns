@@ -6,7 +6,7 @@ import { Toggleable, Props as ToggleableProps, ToggleableComponentProps } from '
 
 // OwnProps is for any public props that should be available on internal Component.props
 // and for WrappedComponent
-type OwnProps = object
+type OwnProps = Pick<ToggleableProps, 'show'>
 type InjectedProps = ToggleableComponentProps
 
 export const withToggleable = <OriginalProps extends object>(
@@ -24,10 +24,13 @@ export const withToggleable = <OriginalProps extends object>(
     static readonly WrappedComponent = UnwrappedComponent
 
     render() {
-      const { ...rest } = this.props
+      const { show, ...rest } = this.props as Pick<Props, 'show'>
 
       return (
-        <Toggleable render={renderProps => <UnwrappedComponent {...rest} {...renderProps} />} />
+        <Toggleable
+          show={show}
+          render={renderProps => <UnwrappedComponent {...rest} {...renderProps} />}
+        />
       )
     }
   }
