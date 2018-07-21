@@ -1,33 +1,55 @@
-import React, { Component, MouseEvent } from 'react'
+import React, { Component, MouseEvent, ComponentType, ReactNode } from 'react'
 
 import { isFunction } from '../utils'
 
 const initialState = { show: false }
+const defaultProps = { props: {} as { [name: string]: any } }
 
 type State = Readonly<typeof initialState>
-type Props = Partial<{
-  children: RenderCallback
-  render: RenderCallback
-}>
+type Props = Partial<
+  {
+    children: RenderCallback | ReactNode
+    render: RenderCallback
+    component: ComponentType<ToggleableComponentProps<any>>
+  } & DefaultProps
+>
+
+type DefaultProps = typeof defaultProps
 
 type RenderCallback = (args: ToggleableComponentProps) => JSX.Element
 
-type ToggleableComponentProps = {
+export type ToggleableComponentProps<P extends object = object> = {
   show: State['show']
   toggle: Toggleable['toggle'] 
-}
+} & P
 
 export class Toggleable extends Component<Props, State> {
+  static readonly defaultProps: Props = defaultProps
   readonly state: State = initialState
 
   render() {
-    const { children, render } = this.props
+    const {
+      component: InjectedComponent,
+      children,
+      render,
+      props
+    } = this.props
     const renderProps = { show: this.state.show, toggle: this.toggle }
+
+    // When component prop API is used, children is ReactNode not a function
+    if (InjectedComponent) {
+      return (
+        <InjectedComponent {...props} {...renderProps}>
+          {children}
+        </InjectedComponent>
+      )
+    }
 
     if (render) {
       return render(renderProps)
     }
 
+    // children as a function comes last
     return isFunction(children) ? children!(renderProps) : null
   }
 
