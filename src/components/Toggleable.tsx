@@ -3,18 +3,18 @@ import React, { Component, MouseEvent, ComponentType, ReactNode } from 'react'
 import { isFunction } from '../utils'
 
 const initialState = { show: false }
-const defaultProps = { props: {} as { [name: string]: any } }
+const defaultProps: DefaultProps = { props: {} }
 
 type State = Readonly<typeof initialState>
-type Props = Partial<
+type Props<P extends object = object> = Partial<
   {
     children: RenderCallback | ReactNode
     render: RenderCallback
     component: ComponentType<ToggleableComponentProps<any>>
-  } & DefaultProps
+  } & DefaultProps<P>
 >
 
-type DefaultProps = typeof defaultProps
+type DefaultProps<P extends object = object> = { props: P }
 
 type RenderCallback = (args: ToggleableComponentProps) => JSX.Element
 
@@ -23,9 +23,12 @@ export type ToggleableComponentProps<P extends object = object> = {
   toggle: Toggleable['toggle'] 
 } & P
 
-export class Toggleable extends Component<Props, State> {
+export class Toggleable<T extends object = object> extends Component<Props<T>, State> {
   static readonly defaultProps: Props = defaultProps
   readonly state: State = initialState
+  static ofType<T extends object>() {
+    return Toggleable as Constructor<Toggleable<T>>
+  }
 
   render() {
     const {
